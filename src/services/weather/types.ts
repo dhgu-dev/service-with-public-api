@@ -1,16 +1,16 @@
 export type Category =
-	| 'POP'
-	| 'PTY'
-	| 'PCP'
-	| 'REH'
-	| 'SNO'
-	| 'SKY'
-	| 'TMP'
-	| 'UUU'
-	| 'VVV'
-	| 'WAV'
-	| 'VEC'
-	| 'WSD';
+	| 'POP' // 강수확률
+	| 'PTY' // 강수형태
+	| 'PCP' // 1시간 강수량
+	| 'REH' // 습도
+	| 'SNO' // 1시간 신적설
+	| 'SKY' // 하늘 상태
+	| 'TMP' // 1시간 기온
+	| 'UUU' // 동+서- 풍속
+	| 'VVV' // 북+남- 풍속
+	| 'WAV' // 파고
+	| 'VEC' // 풍향
+	| 'WSD'; //풍속
 
 export const SKY_CODE = {
 	1: '맑음',
