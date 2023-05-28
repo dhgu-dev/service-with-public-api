@@ -6,6 +6,7 @@ export const ForecastLayout = styled.div`
 	width: 110px;
 	height: 200px;
 	border: 1px solid var(--middle-transparent);
+	margin: 0 24px;
 
 	.temperature {
 		margin-top: 12px;

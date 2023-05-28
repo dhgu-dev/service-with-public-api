@@ -7,12 +7,13 @@ import AddressBar from '../../components/AddressBar';
 import Category, { ICategory } from '../../components/Category/Category';
 import DarkModeToggleButton from '../../components/DarkModeToggleButton';
 import DateInfo from '../../components/DateInfo';
-import Forecast, { IForecast } from '../../components/Forecast/Forecast';
+import { IForecast } from '../../components/Forecast/Forecast';
+import ForecastSlider from '../../components/ForecastSlider';
 import SearchBar from '../../components/SearchBar';
 import Temperature from '../../components/Temperature';
 import TemperatureUnitToggleButton from '../../components/TemperatureUnitToggleButton';
 import Weather from '../../components/Weather';
-import { Forecasts, MainPageLayout } from './styles';
+import { MainPageLayout } from './styles';
 
 /*
 http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst
@@ -106,6 +107,15 @@ function MainPage() {
 			hour: '14',
 			minute: '30',
 		},
+		{
+			temperature: 27,
+			unit: 'Fahrenheit',
+			weather: 'partial_sunny',
+			month: '05',
+			date: '26',
+			hour: '14',
+			minute: '30',
+		},
 	];
 
 	return (
@@ -127,11 +137,7 @@ function MainPage() {
 						<Category key={idx} data={category} />
 					))}
 				</div>
-				<Forecasts>
-					{forecasts.map((forecast, idx) => (
-						<Forecast key={idx} data={forecast} />
-					))}
-				</Forecasts>
+				<ForecastSlider data={forecasts} />
 			</section>
 		</MainPageLayout>
 	);

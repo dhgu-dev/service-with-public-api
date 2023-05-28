@@ -1,7 +1,17 @@
+import useTheme from '../hooks/useTheme';
 import ToggleButton from './ToggleButton';
 
 function DarkModeToggleButton() {
-	return <ToggleButton name="dark-mode" labelOff="L" labelOn="D" />;
+	const { theme, toggleTheme } = useTheme();
+	return (
+		<ToggleButton
+			name="dark-mode"
+			labelOff="L"
+			labelOn="D"
+			checked={theme === 'dark'}
+			onToggle={toggleTheme}
+		/>
+	);
 }
 
 export default DarkModeToggleButton;
