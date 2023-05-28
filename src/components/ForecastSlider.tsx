@@ -10,15 +10,17 @@ const ForecastSliderLayout = styled.div`
 
 type Props = {
 	data: IForecast[];
+	onChange?: () => void;
 };
 
-function ForecastSlider({ data }: Props) {
+function ForecastSlider({ data, onChange }: Props) {
 	const settings = {
 		dots: false,
 		infinite: false,
 		speed: 500,
 		slidesToShow: 4,
 		slidesToScroll: 4,
+		afterChange: onChange,
 	};
 
 	return (

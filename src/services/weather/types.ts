@@ -64,5 +64,21 @@ export enum WeatherApiErrorCode {
 export interface Forecast {
 	fcstDate: string;
 	fcstTime: string;
-	categories: Map<Category, number | string>;
+	categories: { [index: string]: number | string };
+}
+
+export interface WeatherApiResponse {
+	header: {
+		resultCode: WeatherApiErrorCode;
+		resultMsg: string;
+	};
+	body: {
+		dataType: string;
+		items: {
+			item: WeatherField[];
+		};
+		pageNo: number;
+		numOfRows: number;
+		totalCount: number;
+	};
 }

@@ -1,5 +1,3 @@
-import axios from 'axios';
-import { useEffect } from 'react';
 import { BsCloudRainHeavy } from 'react-icons/bs';
 import { CiLocationArrow1 } from 'react-icons/ci';
 import { MdOutlineWaterDrop } from 'react-icons/md';
@@ -9,136 +7,88 @@ import DarkModeToggleButton from '../../components/DarkModeToggleButton';
 import DateInfo from '../../components/DateInfo';
 import { IForecast } from '../../components/Forecast/Forecast';
 import ForecastSlider from '../../components/ForecastSlider';
+import LoadingBoundary from '../../components/LoadingBoundary';
 import SearchBar from '../../components/SearchBar';
 import Temperature from '../../components/Temperature';
 import TemperatureUnitToggleButton from '../../components/TemperatureUnitToggleButton';
 import Weather from '../../components/Weather';
+import useTemperatureUnit from '../../hooks/useTemperatureUnit';
+import useWeather, { getWeatherType } from '../../services/weather/useWeather';
 import { MainPageLayout } from './styles';
 
-/*
-http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst
-?serviceKey=인증키&numOfRows=10&pageNo=1
-&base_date=20210628&base_time=0500&nx=55&ny=127
-*/
-
 function MainPage() {
-	const apiCall = async () => {
-		try {
-			const response = await axios.get(
-				'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst',
-				{
-					params: {
-						serviceKey: process.env.REACT_APP_API_KEY,
-						pageNo: 35,
-						numOfRows: 12,
-						dataType: 'JSON',
-						base_date: '20230523',
-						base_time: '0200',
-						nx: 55,
-						ny: 127,
-					},
-				},
-			);
-			console.log(JSON.stringify(response.data.response.body));
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
-	useEffect(() => {
-		apiCall();
-	}, []);
+	const { weather, fetchMore } = useWeather();
+	const { calculateWithUnit, toggleUnit, unit } = useTemperatureUnit();
 
 	const categories: ICategory[] = [
 		{
 			icon: <CiLocationArrow1 style={{ transform: 'rotate(45deg)' }} />,
 			name: '풍속',
-			value: 10,
+			value: weather.forecasts[0]?.categories['WSD'],
 			unit: 'm/s',
 		},
 		{
 			icon: <MdOutlineWaterDrop />,
 			name: '습도',
-			value: 23,
+			value: weather.forecasts[0]?.categories['REH'],
 			unit: '%',
 		},
 		{
 			icon: <BsCloudRainHeavy />,
 			name: '강수확률',
-			value: 15,
+			value: weather.forecasts[0]?.categories['POP'],
 			unit: '%',
 		},
 	];
 
-	const forecasts: IForecast[] = [
-		{
-			temperature: 27,
-			unit: 'Celsius',
-			weather: 'rain',
-			month: '05',
-			date: '26',
-			hour: '14',
-			minute: '30',
-		},
-		{
-			temperature: 27,
-			unit: 'Fahrenheit',
-			weather: 'sunny',
-			month: '05',
-			date: '26',
-			hour: '14',
-			minute: '30',
-		},
-		{
-			temperature: 27,
-			unit: 'Celsius',
-			weather: 'snow_rain',
-			month: '05',
-			date: '26',
-			hour: '14',
-			minute: '30',
-		},
-		{
-			temperature: 27,
-			unit: 'Fahrenheit',
-			weather: 'partial_sunny',
-			month: '05',
-			date: '26',
-			hour: '14',
-			minute: '30',
-		},
-		{
-			temperature: 27,
-			unit: 'Fahrenheit',
-			weather: 'partial_sunny',
-			month: '05',
-			date: '26',
-			hour: '14',
-			minute: '30',
-		},
-	];
+	const forecasts: IForecast[] = weather.forecasts.map(
+		(forecast) =>
+			({
+				temperature: calculateWithUnit(forecast.categories['TMP']),
+				unit: unit,
+				weather: getWeatherType(forecast),
+				month: forecast.fcstDate.slice(4, 6),
+				date: forecast.fcstDate.slice(6),
+				hour: forecast.fcstTime.slice(0, 2),
+				minute: forecast.fcstTime.slice(2),
+			} as IForecast),
+	);
 
 	return (
 		<MainPageLayout>
-			<section className="inner-main">
-				<div className="toggle-buttons">
-					<DarkModeToggleButton />
-					<TemperatureUnitToggleButton />
-				</div>
-				<section className="address">
-					<AddressBar address={['서울특별시', '종로구', '사직동']} />
-					<SearchBar />
+			<LoadingBoundary>
+				<section className="inner-main">
+					<div className="toggle-buttons">
+						<DarkModeToggleButton />
+						<TemperatureUnitToggleButton
+							checked={unit === 'Fahrenheit'}
+							onToggle={toggleUnit}
+						/>
+					</div>
+					<section className="address">
+						<AddressBar address={['서울특별시', '종로구', '사직동']} />
+						<SearchBar />
+					</section>
+					<Weather
+						type={
+							weather.forecasts[0]
+								? getWeatherType(weather.forecasts[0])
+								: 'sunny'
+						}
+					/>
+					<Temperature
+						value={calculateWithUnit(weather.forecasts[0]?.categories['TMP'])}
+						unit={unit}
+					/>
+					<DateInfo />
+					<div className="categories">
+						{categories.map((category, idx) => (
+							<Category key={idx} data={category} />
+						))}
+					</div>
+					<ForecastSlider data={forecasts} onChange={fetchMore} />
 				</section>
-				<Weather type="rain" />
-				<Temperature value={27} unit="Celsius" />
-				<DateInfo />
-				<div className="categories">
-					{categories.map((category, idx) => (
-						<Category key={idx} data={category} />
-					))}
-				</div>
-				<ForecastSlider data={forecasts} />
-			</section>
+			</LoadingBoundary>
 		</MainPageLayout>
 	);
 }

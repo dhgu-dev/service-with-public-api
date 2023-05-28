@@ -20,6 +20,30 @@ interface ILatGridData {
 
 class LatGrid {
 	private static data = Object.values(data)[0] as ILatGridData[];
+
+	public findCoordByAddress(address: string) {
+		const target = LatGrid.data.find((info) => {
+			const pattern = address.replaceAll(/\s/g, '');
+			const regex = new RegExp(pattern);
+			if (regex.test(info['1단계'])) {
+				return true;
+			}
+
+			if (info['2단계'] && regex.test(info['2단계'])) {
+				return true;
+			}
+
+			if (info['3단계'] && regex.test(info['3단계'])) {
+				return true;
+			}
+
+			return false;
+		});
+
+		if (!target) return { nx: 60, ny: 127 };
+
+		return { nx: Number(target['격자 X']), ny: Number(target['격자 Y']) };
+	}
 }
 
 export default LatGrid;
