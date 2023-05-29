@@ -10,7 +10,6 @@ export const AddressBarLayout = styled.div`
 		gap: 0.7em;
 		align-items: center;
 
-		/* stylelint-disable-next-line no-descending-specificity */
 		svg {
 			width: 35px;
 			height: 35px;
@@ -18,11 +17,11 @@ export const AddressBarLayout = styled.div`
 			filter: drop-shadow(-1.5px 2.25px 0.75px rgb(0 0 0 / 10%));
 		}
 
-		/* stylelint-disable-next-line no-descending-specificity */
 		span {
 			font-family: var(--primary-kr);
-			font-size: 32px;
+			font-size: 28px;
 			line-height: 1.2;
+			white-space: nowrap;
 			color: var(--white);
 			text-shadow: -1.51px 2.26px 0.75px rgb(0 0 0 / 10%);
 		}

@@ -18,5 +18,5 @@ export const pageNoAtom = atom({
 
 export const loadingAtom = atom({
 	key: 'loading',
-	default: false,
+	default: true,
 });

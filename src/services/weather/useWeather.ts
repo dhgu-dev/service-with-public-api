@@ -100,37 +100,51 @@ export default function useWeather() {
 	const setLoading = useSetRecoilState(loadingAtom);
 
 	useEffect(() => {
-		setLoading(true);
-		setTimeout(() => setLoading(false), 2000);
+		const tid = setTimeout(() => setLoading(false), 2000);
+		return () => {
+			clearTimeout(tid);
+		};
 	}, [setLoading]);
 
 	useEffect(() => {
+		const triggeredPageNo = pageNo;
 		fetchWeatherFields(base, pageNo).then((res) => {
 			if (!res) return;
-			setWeather((prev) => ({
-				forecasts: getUpdatedForecasts(res.body.items.item, prev.forecasts),
-			}));
+
+			if (triggeredPageNo === 1) {
+				setWeather({
+					forecasts: getUpdatedForecasts(res.body.items.item, []),
+				});
+			} else {
+				setWeather((prev) => ({
+					forecasts: getUpdatedForecasts(res.body.items.item, prev.forecasts),
+				}));
+			}
 			setMaxPage(Math.floor(res.body.totalCount / 96));
 		});
 	}, [pageNo, base, setLoading]);
-
-	useEffect(() => {
-		setWeather({
-			forecasts: [],
-		});
-	}, [base]);
 
 	const fetchMore = () =>
 		setPageNo((prev) => (prev < maxPage ? prev + 1 : prev));
 
 	const search = (text: string) => {
-		const { nx, ny } = latGrid.findCoordByAddress(text);
+		const { nx, ny, address } = latGrid.findCoordByAddress(text);
+		console.log(`nx: ${nx}, ny: ${ny}, address: ${address}`);
+		if (nx === -1 && ny === -1) return address;
+
 		setBase((prev) => ({ ...prev, nx: nx, ny: ny }));
+		setPageNo(1);
+		return address;
+	};
+
+	const getRecommendKeywords = (text: string) => {
+		return latGrid.getRecommends(text);
 	};
 
 	return {
 		fetchMore,
 		weather,
 		search,
+		getRecommendKeywords,
 	};
 }

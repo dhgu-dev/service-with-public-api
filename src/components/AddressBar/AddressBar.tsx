@@ -3,9 +3,10 @@ import { AddressBarLayout } from './AddressBar.styles';
 
 type Props = {
 	address: string[];
+	onClick?: () => void;
 };
 
-function AddressBar({ address }: Props) {
+function AddressBar({ address, onClick }: Props) {
 	return (
 		<AddressBarLayout>
 			<div>
@@ -14,7 +15,7 @@ function AddressBar({ address }: Props) {
 					<span key={idx}>{text}</span>
 				))}
 			</div>
-			<button type="button" className="btn-search">
+			<button type="button" className="btn-search" onClick={onClick}>
 				<MdSearch />
 			</button>
 		</AddressBarLayout>

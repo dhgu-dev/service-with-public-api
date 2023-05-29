@@ -21,6 +21,7 @@ function ForecastSlider({ data, onChange }: Props) {
 		slidesToShow: 4,
 		slidesToScroll: 4,
 		afterChange: onChange,
+		initialSlide: 0,
 	};
 
 	return (

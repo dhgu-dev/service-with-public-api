@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BsCloudRainHeavy } from 'react-icons/bs';
 import { CiLocationArrow1 } from 'react-icons/ci';
 import { MdOutlineWaterDrop } from 'react-icons/md';
@@ -19,6 +20,13 @@ import { MainPageLayout } from './styles';
 function MainPage() {
 	const { weather, fetchMore } = useWeather();
 	const { calculateWithUnit, toggleUnit, unit } = useTemperatureUnit();
+	const [hideSearchBar, setHideSearchBar] = useState(true);
+	const [address, setAddress] = useState(['서울특별시', '종로구', '사직동']);
+
+	const handleSubmitAddress = (address: string[]) => {
+		setAddress(address);
+		setHideSearchBar(true);
+	};
 
 	const categories: ICategory[] = [
 		{
@@ -66,8 +74,14 @@ function MainPage() {
 						/>
 					</div>
 					<section className="address">
-						<AddressBar address={['서울특별시', '종로구', '사직동']} />
-						<SearchBar />
+						<AddressBar
+							address={address}
+							onClick={() => setHideSearchBar((prev) => !prev)}
+						/>
+						<SearchBar
+							hidden={hideSearchBar}
+							onSubmitKeyword={handleSubmitAddress}
+						/>
 					</section>
 					<Weather
 						type={
@@ -77,7 +91,9 @@ function MainPage() {
 						}
 					/>
 					<Temperature
-						value={calculateWithUnit(weather.forecasts[0]?.categories['TMP'])}
+						value={
+							calculateWithUnit(weather.forecasts[0]?.categories['TMP']) || 20
+						}
 						unit={unit}
 					/>
 					<DateInfo />
